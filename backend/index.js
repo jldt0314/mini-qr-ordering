@@ -1,24 +1,27 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import './config/db.js'; // triggers pool creation and connection test on startup
+import './config/db.js';
+import productRoutes from './routes/products.js';
+import orderRoutes  from './routes/orders.js';
 
 dotenv.config();
 
 const app  = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware — allows Express to read JSON request bodies
+// ── Middleware ─────────────────────────────────
 app.use(express.json());
 
-// Test route — confirms the server and DB are both alive
+// ── Routes ────────────────────────────────────
+app.use('/api/products', productRoutes);
+app.use('/api/orders',   orderRoutes);
+
+// ── Health Check ──────────────────────────────
 app.get('/api/test', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Backend is running and database is connected! 🚀',
-  });
+  res.json({ success: true, message: 'Backend is running! 🚀' });
 });
 
-// Start the server
+// ── Start Server ──────────────────────────────
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on http://localhost:${PORT}`);
 });
