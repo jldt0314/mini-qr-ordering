@@ -7,16 +7,40 @@ export default function Cart({ isOpen, onClose }) {
   const [paymentStatus, setPaymentStatus] = useState(null);
   // null | 'processing' | 'success' | 'failed'
 
-  function handlePlaceOrder() {
-    setPaymentStatus("processing");
+  async function handlePlaceOrder() {
+  setPaymentStatus("processing");
 
-    // Simulate 2 second processing delay
-    setTimeout(() => {
-      // 80% success rate simulation
-      const success = Math.random() > 0.2;
-      setPaymentStatus(success ? "success" : "failed");
-    }, 2000);
+  try {
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/orders`,
+      {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          table_number: tableNumber,
+          total_amount: total,
+          items: cartItems.map((item) => ({
+            product_id: item.id,
+            quantity:   item.quantity,
+            unit_price: parseFloat(item.price),
+          })),
+        }),
+      }
+    );
+
+    const json = await res.json();
+
+    if (!res.ok || !json.success) {
+      throw new Error(json.message || "Order failed.");
+    }
+
+    setPaymentStatus("success");
+
+  } catch (err) {
+    console.error("Order error:", err);
+    setPaymentStatus("failed");
   }
+}
 
   function handleModalClose() {
     setPaymentStatus(null);
