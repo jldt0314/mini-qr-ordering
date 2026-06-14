@@ -35,12 +35,12 @@ export default function QRPage() {
         
       </div>
       {/* Print Button — hidden when printing */}
-        <button
-          onClick={handlePrint}
-          className="print:hidden w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 m-4 rounded-xl transition-colors"
-        >
-          🖨️ Print QR Code
-        </button>
+      <button
+        onClick={handlePrint}
+        className="print:hidden max-w-sm w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 mt-4 rounded-xl transition-colors"
+      >
+        🖨️ Print QR Code
+      </button>
     </div>
   );
 }
