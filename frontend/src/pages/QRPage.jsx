@@ -1,14 +1,11 @@
 import { QRCodeSVG } from "qrcode.react";
 import { useSearchParams } from "react-router-dom";
 
-// Replace with your actual local IP (run `ipconfig` in terminal to find it)
-const LOCAL_IP   = "192.168.254.104";
-
 
 export default function QRPage() {
   const [searchParams] = useSearchParams();
   const table          = searchParams.get("table") || "1";
-  const MENU_URL       = `http://${LOCAL_IP}:5173/?table=${table}`;
+  const MENU_URL = `${import.meta.env.VITE_APP_URL}/?table=${table}`;
 
   function handlePrint() {
     window.print();
