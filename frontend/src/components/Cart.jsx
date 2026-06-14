@@ -37,6 +37,7 @@ export default function Cart({ isOpen, onClose }) {
     }
 
     setPaymentStatus("success");
+    await new Promise((resolve) => setTimeout(resolve, 2500)); // 2.5 second delay
     navigate(`/order-status?table=${tableNumber}`);
 
   } catch (err) {
