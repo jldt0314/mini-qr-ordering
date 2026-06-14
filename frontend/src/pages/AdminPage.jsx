@@ -74,12 +74,19 @@ export default function AdminPage() {
     fetchOrders();
   }, []);
 
-  // Auto-refresh relative time of orders every 30 seconds
+  // Auto-refresh relative time of orders every 15 seconds
   useEffect(() => {
-    const timer = setInterval(() => setTick(t => t + 1), 45000); // refresh every 45s
+    const timer = setInterval(() => setTick(t => t + 1), 15000); // refresh every 15s
     return () => clearInterval(timer);
   }, []);
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+  const interval = setInterval(() => {
+    fetchOrders();
+  }, 30000);
 
+  return () => clearInterval(interval); // cleanup on unmount
+}, []);
   async function fetchOrders() {
     try {
       setLoading(true);
