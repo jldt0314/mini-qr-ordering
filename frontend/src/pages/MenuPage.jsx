@@ -1,20 +1,36 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useNavigate } from 'react-router-dom';
 import MenuList from "../components/MenuList";
 import Cart from "../components/Cart";
+
+
 
 export default function MenuPage() {
   const [searchParams]          = useSearchParams();
   const { setTableNumber, totalItems } = useCart();
   const [cartOpen, setCartOpen] = useState(false);
+  const table = searchParams.get("table") || "Unknown";
+  const navigate = useNavigate();
 
-  // Sub-task 1: Read ?table=A1 from the URL on page load
+  // Sub-task 1: Read ?table=<value> from the URL on page load and check for active orders for that table.
   useEffect(() => {
-    const table = searchParams.get("table") || "Unknown";
     setTableNumber(table);
-  }, [searchParams]);
+    async function checkActiveOrder() {
+    
+      const res  = await fetch(`${import.meta.env.VITE_API_URL}/api/orders/table/${table}`);
+      const json = await res.json();
+      // If an active order exists, redirect to /order-status?table=<value>.
+      if (json.success && json.data.length > 0) {
+        // active order exists — redirect with the order data
+        navigate(`/order-status?table=${table}`);
+      }
+    }
 
+    if (table !== "Unknown") checkActiveOrder();
+  }, [table, setTableNumber, navigate]);
+  
   return (
     <div className="min-h-screen bg-gray-50">
 
