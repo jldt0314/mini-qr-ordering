@@ -4,6 +4,30 @@ const STATUS_OPTIONS = ["pending", "confirmed", "preparing", "ready", "completed
 
 const STATUS_FLOW = ["pending", "confirmed", "preparing", "ready", "completed"];
 
+
+function timeAgo(dateString) {
+  const now     = new Date();
+  const created = new Date(dateString);
+  const seconds = Math.floor((now - created) / 1000);
+
+  if (seconds < 60)                       return `${seconds}s ago`;
+  if (seconds < 3600)                     return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400)                    return `${Math.floor(seconds / 3600)}h ago`;
+  return `${Math.floor(seconds / 86400)}d ago`;
+}
+
+function timeAgoColor(dateString, status) {
+  if (status === "completed" || status === "cancelled") return "text-gray-400";
+  // To correspond time with urgency
+  const seconds = Math.floor((new Date() - new Date(dateString)) / 1000);
+  const minutes = seconds / 60;
+
+  if (minutes < 5)  return "text-green-600 font-bold";
+  if (minutes < 16) return "text-yellow-500 font-bold";
+  if (minutes < 31) return "text-orange-500 font-bold";
+  return "text-red-600 font-bold";
+}
+
 function getStatusButtons(currentStatus) {
   const currentIndex = STATUS_FLOW.indexOf(currentStatus);
 
@@ -32,10 +56,28 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState(null);
   const [updating, setUpdating] = useState(null); // tracks which order is being updated
+  const inProgressCount = orders.filter(o => !["completed", "cancelled"].includes(o.status)).length;
+  const completedCount  = orders.filter(o => o.status === "completed").length;
+  const cancelledCount  = orders.filter(o => o.status === "cancelled").length;
+  const [, setTick] = useState(0);
+  
+  const [qrTable, setQrTable] = useState("");
 
+  
+
+  function handleGenerateQR() {
+    if (!qrTable.trim()) return alert("Please enter a table number.");
+    window.open(`/qr?table=${qrTable.trim()}`, "_blank");
+  }
   // ── Fetch all orders on mount ──────────────
   useEffect(() => {
     fetchOrders();
+  }, []);
+
+  // Auto-refresh relative time of orders every 30 seconds
+  useEffect(() => {
+    const timer = setInterval(() => setTick(t => t + 1), 45000); // refresh every 45s
+    return () => clearInterval(timer);
   }, []);
 
   async function fetchOrders() {
@@ -119,12 +161,31 @@ export default function AdminPage() {
             <h1 className="text-xl font-bold text-gray-800">🛠️ Admin Dashboard</h1>
             <p className="text-sm text-gray-400">CubeTech Eats — Order Management</p>
           </div>
-          <button
-            onClick={fetchOrders}
-            className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium px-4 py-2 rounded-xl transition-colors"
-          >
-            🔄 Refresh
-          </button>
+          
+          {/* Generate QR */}
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={qrTable}
+              onChange={(e) => setQrTable(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleGenerateQR()}
+              placeholder="Table no."
+              className="text-sm border border-gray-200 rounded-xl px-3 py-2 w-28 focus:outline-none focus:ring-2 focus:ring-orange-300"
+            />
+            <button
+              onClick={handleGenerateQR}
+              className="text-sm bg-orange-500 hover:bg-orange-600 text-white font-medium px-4 py-2 rounded-xl transition-colors"
+            >
+              📱 Generate QR
+            </button>
+
+            <button
+              onClick={fetchOrders}
+              className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium px-4 py-2 rounded-xl transition-colors"
+            >
+              🔄 Refresh
+            </button>
+          </div>
         </div>
       </header>
 
@@ -139,6 +200,22 @@ export default function AdminPage() {
           </div>
         ) : (
           <div className="space-y-4">
+            <div class="grid grid-cols-3 gap-4">
+              <div class="bg-gray-50 border border-gray-200 p-4 rounded-lg shadow-sm flex flex-col justify-between">
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">In-Progress</span>
+                <span class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1">{inProgressCount}</span>
+              </div>
+
+              <div class="bg-green-100 border border-gray-200 p-4 rounded-lg shadow-sm flex flex-col justify-between">
+                <span class="text-xs font-semibold text-green-500 uppercase tracking-wider">Completed</span>
+                <span class="text-2xl sm:text-3xl font-extrabold text-green-600 mt-1">{completedCount}</span>
+              </div>
+
+              <div class="bg-gray-50 border border-red-200 p-4 rounded-lg shadow-sm flex flex-col justify-between">
+                <span class="text-xs font-semibold text-red-500 uppercase tracking-wider">Cancelled</span>
+                <span class="text-2xl sm:text-3xl font-extrabold text-red-700 mt-1">{cancelledCount}</span>
+              </div>
+            </div>
             {orders.map((order) => (
               <div
                 key={order.order_id}
@@ -155,9 +232,9 @@ export default function AdminPage() {
                         {order.status.toUpperCase()}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 mt-0.5">
+                    <p className={`text-sm mt-0.5 ${timeAgoColor(order.created_at, order.status)}`}>
                       🪑 Table {order.table_number} &nbsp;·&nbsp;
-                      🕐 {new Date(order.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      🕐 {timeAgo(order.created_at)}
                     </p>
                   </div>
                   <p className="text-orange-500 font-bold text-xl">
