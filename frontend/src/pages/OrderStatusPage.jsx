@@ -28,6 +28,10 @@ export default function OrderStatusPage() {
         setOrder(json.data[0]);
       } else {
         // No active order found — send back to menu
+        if(order != null){
+            // If there's recent order data the has just completed, show the status for a bit before redirecting
+            await new Promise((resolve) => setTimeout(resolve, 10000));
+        }
         navigate(`/?table=${table}`);
       }
     } catch (err) {
