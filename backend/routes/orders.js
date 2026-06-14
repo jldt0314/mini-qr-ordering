@@ -25,8 +25,7 @@ router.post('/', async (req, res) => {
     const [existing] = await connection.query(
       `SELECT id, status FROM orders 
       WHERE table_number = ? 
-      AND status NOT IN ('completed', 'cancelled')
-      ORDER BY `,
+      AND status NOT IN ('completed', 'cancelled') LIMIT 1`,
       [table_number]
     );
 
