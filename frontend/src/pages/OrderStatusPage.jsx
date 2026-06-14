@@ -7,7 +7,7 @@ const STATUS_LABELS = {
   pending:   { emoji: "🕐", label: "Order Received",    desc: "Your order is waiting to be confirmed." },
   confirmed: { emoji: "✅", label: "Order Confirmed",   desc: "The restaurant has confirmed your order." },
   preparing: { emoji: "👨‍🍳", label: "Being Prepared",  desc: "The kitchen is preparing your food." },
-  ready:     { emoji: "🍽️", label: "Ready for Pickup", desc: "Your order is ready! A staff will serve you shortly." },
+  ready:     { emoji: "🍽️", label: "On the way to your table", desc: "Your order is ready! A staff will serve you shortly." },
   completed: { emoji: "🎉", label: "Served!",           desc: "Enjoy your meal!" },
   cancelled: { emoji: "❌", label: "Cancelled",         desc: "This order has been cancelled." },
 };
