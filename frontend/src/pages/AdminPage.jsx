@@ -162,22 +162,30 @@ export default function AdminPage() {
             <p className="text-sm text-gray-400">CubeTech Eats — Order Management</p>
           </div>
           
-          {/* Generate QR */}
+          {/* Generate QR — hover to reveal input */}
           <div className="flex items-center gap-2">
-            <input
-              type="text"
-              value={qrTable}
-              onChange={(e) => setQrTable(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleGenerateQR()}
-              placeholder="Table no."
-              className="text-sm border border-gray-200 rounded-xl px-3 py-2 w-28 focus:outline-none focus:ring-2 focus:ring-orange-300"
-            />
-            <button
-              onClick={handleGenerateQR}
-              className="text-sm bg-orange-500 hover:bg-orange-600 text-white font-medium px-4 py-2 rounded-xl transition-colors"
-            >
-              📱 Generate QR
-            </button>
+            <div className="group flex items-center gap-2">
+              <input
+                type="text"
+                value={qrTable}
+                onChange={(e) => setQrTable(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleGenerateQR()}
+                placeholder="Table no."
+                className="
+                  w-0 opacity-0 pointer-events-none
+                  group-hover:w-28 group-hover:opacity-100 group-hover:pointer-events-auto
+                  transition-all duration-300 ease-in-out
+                  text-sm border border-gray-200 rounded-xl px-3 py-2
+                  focus:outline-none focus:ring-2 focus:ring-orange-300
+                "
+              />
+              <button
+                onClick={handleGenerateQR}
+                className="text-sm bg-orange-500 hover:bg-orange-600 text-white font-medium px-4 py-2 rounded-xl transition-colors whitespace-nowrap"
+              >
+                📱 Generate QR
+              </button>
+            </div>
 
             <button
               onClick={fetchOrders}
