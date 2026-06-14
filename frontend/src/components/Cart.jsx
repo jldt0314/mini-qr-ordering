@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import PaymentModal from "./PaymentModal";
+import { useNavigate } from 'react-router-dom';
 
 export default function Cart({ isOpen, onClose }) {
   const { cartItems, increment, decrement, removeItem, clearCart, total, tableNumber } = useCart();
   const [paymentStatus, setPaymentStatus] = useState(null);
+  const navigate = useNavigate();
   // null | 'processing' | 'success' | 'failed'
 
   async function handlePlaceOrder() {
@@ -35,6 +37,7 @@ export default function Cart({ isOpen, onClose }) {
     }
 
     setPaymentStatus("success");
+    navigate(`/order-status?table=${tableNumber}`);
 
   } catch (err) {
     console.error("Order error:", err);
