@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const STATUS_OPTIONS = ["pending", "confirmed", "preparing", "ready", "completed", "cancelled"];
 
@@ -63,7 +64,12 @@ export default function AdminPage() {
   
   const [qrTable, setQrTable] = useState("");
 
-  
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    sessionStorage.removeItem("admin_authenticated");
+    navigate("/admin-login");
+  }
 
   function handleGenerateQR() {
     if (!qrTable.trim()) return alert("Please enter a table number.");
@@ -200,6 +206,12 @@ export default function AdminPage() {
             >
               🔄 Refresh
             </button>
+            <button
+              onClick={handleLogout}
+              className="text-sm bg-red-50 hover:bg-red-100 text-red-500 font-medium px-4 py-2 rounded-xl transition-colors"
+            >
+              🚪 Logout
+            </button>
           </div>
         </div>
       </header>
@@ -215,20 +227,20 @@ export default function AdminPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            <div class="grid grid-cols-3 gap-4">
-              <div class="bg-gray-50 border border-gray-200 p-4 rounded-lg shadow-sm flex flex-col justify-between">
-                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">In-Progress</span>
-                <span class="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1">{inProgressCount}</span>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg shadow-sm flex flex-col justify-between">
+                <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">In-Progress</span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1">{inProgressCount}</span>
               </div>
 
-              <div class="bg-green-100 border border-gray-200 p-4 rounded-lg shadow-sm flex flex-col justify-between">
-                <span class="text-xs font-semibold text-green-500 uppercase tracking-wider">Completed</span>
-                <span class="text-2xl sm:text-3xl font-extrabold text-green-600 mt-1">{completedCount}</span>
+              <div className="bg-green-100 border border-gray-200 p-4 rounded-lg shadow-sm flex flex-col justify-between">
+                <span className="text-xs font-semibold text-green-500 uppercase tracking-wider">Completed</span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-green-600 mt-1">{completedCount}</span>
               </div>
 
-              <div class="bg-gray-50 border border-red-200 p-4 rounded-lg shadow-sm flex flex-col justify-between">
-                <span class="text-xs font-semibold text-red-500 uppercase tracking-wider">Cancelled</span>
-                <span class="text-2xl sm:text-3xl font-extrabold text-red-700 mt-1">{cancelledCount}</span>
+              <div className="bg-gray-50 border border-red-200 p-4 rounded-lg shadow-sm flex flex-col justify-between">
+                <span className="text-xs font-semibold text-red-500 uppercase tracking-wider">Cancelled</span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-red-700 mt-1">{cancelledCount}</span>
               </div>
             </div>
             {orders.map((order) => (
