@@ -187,6 +187,23 @@ Key design decisions:
 
 ---
 
+## ⭐ Additional Features Beyond Requirements
+
+The following features were added beyond the assessment requirements to improve the overall system quality and user experience:
+
+| Feature | Description |
+|---|---|
+| **Admin Login Page** | Session-based authentication with password stored in environment variables — protects the dashboard from unauthorized access |
+| **Order Status Page** | Customers are redirected here after placing an order to track their order progress in real time through the status workflow |
+| **Admin Metrics Bar** | Live counters for in-progress, completed, and cancelled orders displayed at the top of the dashboard |
+| **Order Aging Indicators** | Color-coded timestamps on each order card — green under 5 mins, yellow 5-15 mins, orange 16-30 mins, red over 30 mins |
+| **Auto-Polling** | Admin Dashboard auto-refreshes every 30 seconds, Order Status Page every 5 seconds — no manual refresh needed |
+| **`order_items` Junction Table** | Properly normalizes the many-to-many relationship between orders and products, with `unit_price` snapshots for historical price accuracy |
+| **Active Order Guardrail** | `GET /api/orders/table/:tableNumber` endpoint checks for existing active orders — prevents duplicate orders from the same table and redirects customers to their current order |
+| **Dynamic QR Generation** | Admin can generate and print QR codes for any table directly from the dashboard |
+
+---
+
 ## 👨‍💻 Author
 
 **Lyle** — OJT Intern Applicant
