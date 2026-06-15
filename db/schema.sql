@@ -4,6 +4,7 @@
 -- Run this entire script once in your DBCode Query Editor
 -- ============================================================
 
+-- Update the database name below to match your .env DB_NAME configuration
 CREATE DATABASE IF NOT EXISTS cubetech_qr_ordering
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
